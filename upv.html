@@ -79,7 +79,7 @@
             localStorage.setItem("verification_code", code); // Save code in localStorage
 
           
-            emailjs.send("service_g55k84c", "dnubinfz9VQV8L-Li", {to_email: toEmail, verification_code: code})
+            emailjs.send("service_g55k84c", "template_fn43eeh", {to_email: toEmail, verification_code: code})
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     document.getElementById("email-form").style.display = "none";
