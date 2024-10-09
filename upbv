@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        #form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 90% auto;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="form-container">
+        <div id="email-form">
+            <h2>Enter Your Email</h2>
+            <input type="email" id="to_email" placeholder="Enter your email" required>
+            <button id="send-code">Send Verification Code</button>
+        </div>
+        <div id="code-form" style="display:none;">
+            <h2>Enter Verification Code</h2>
+            <input type="text" id="verification_code" placeholder="Enter code" required>
+            <button id="verify-code">Verify Code</button>
+        </div>
+        <div id="message"></div>
+    </div>
+
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS
+        emailjs.init({ publicKey: "dnubinfz9VQV8L-Li" });
+        document.getElementById("send-code").addEventListener("click", function() {
+            const toEmail = document.getElementById("to_email").value;
+
+            // Check if the email is valid (you can modify this check as needed)
+            if (!toEmail || !toEmail.includes("@")) {
+                document.getElementById("message").textContent = "Please enter a valid email address.";
+                return;
+            }
+
+            // Generate a 4-digit random code
+            const code = Math.floor(1000 + Math.random() * 9000);
+            localStorage.setItem("verification_code", code); // Save code in localStorage
+
+            // Send email
+            const templateParams = {
+                to_email: toEmail,
+                verification_code: code,
+            };
+
+            emailjs.send("service_g55k84c", "dnubinfz9VQV8L-Li", templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    document.getElementById("email-form").style.display = "none";
+                    document.getElementById("code-form").style.display = "block";
+                    document.getElementById("message").textContent = "Verification code sent to your email.";
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    document.getElementById("message").textContent = "Error sending email. Please try again.";
+                });
+        });
+
+        document.getElementById("verify-code").addEventListener("click", function() {
+            const enteredCode = document.getElementById("verification_code").value;
+            const savedCode = localStorage.getItem("verification_code");
+
+            if (enteredCode === savedCode) {
+                // Code matches
+                document.getElementById("message").textContent = "Verification successful!";
+                // Send a success message to the parent website in the iframe
+                window.parent.postMessage("verification_success", "*");
+            } else {
+                // Code does not match
+                document.getElementById("message").textContent = "Verification failed. Please try again.";
+            }
+        });
+    </script>
+</body>
+</html>
