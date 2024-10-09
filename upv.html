@@ -6,41 +6,75 @@
     <title>Email Verification</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f4;
+            background-color: #f8f0fc;
+            margin: 0;
         }
 
         #form-container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            max-width: 400px;
+            width: 100%;
         }
 
         h2 {
-            margin-bottom: 10px;
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
         }
 
         input {
-            width: 90% auto;
-            padding: 10px;
-            margin-bottom: 10px;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
         }
 
         button {
-            padding: 10px;
-            background-color: #007BFF;
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
             color: white;
             border: none;
-            cursor: pointer;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 500;
+           
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
             background-color: #0056b3;
+        }
+
+        #message, #message2 {
+            margin-top: 20px;
+            font-size: 0.9em;
+            padding: 10px;
+            border-radius: 8px;
+            display:none;
+        }
+
+        #message {
+            color: #28a745;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        #message2 {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
         }
     </style>
 </head>
@@ -48,7 +82,7 @@
     <div id="form-container">
         <div id="email-form">
             <h2>Enter Your Email</h2>
-            <input type="email" id="to_email" placeholder="Enter your email" required>
+            <input type="email" id="to_email" placeholder="email@email.com" required>
             <button id="send-code">Send Verification Code</button>
         </div>
         <div id="code-form" style="display:none;">
@@ -56,21 +90,22 @@
             <input type="text" id="verification_code" placeholder="Enter code" required>
             <button id="verify-code">Verify Code</button>
         </div>
-      <div style="color:red" id="message2"></div>
-        <div style="color:green" id="message"></div>
+        <div id="message2"></div>
+        <div id="message"></div>
     </div>
-
     <script type="text/javascript"
         src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
     </script><script>
         // Initialize EmailJS
-        emailjs.init({ publicKey: "dnubinfz9VQV8L-Li" });
+        emailjs.init({ publicKey: "2YgGWzyn6XD7EcrL_" });
         document.getElementById("send-code").addEventListener("click", function() {
             const toEmail = document.getElementById("to_email").value;
-
+const message = document.getElementById("message");
+            const message2 = document.getElementById("message2");
             // Check if the email is valid (you can modify this check as needed)
             if (!toEmail || !toEmail.includes("@")) {
-                document.getElementById("message2").textContent = "Please enter a valid email address.";
+                message2.style.display = "block";
+                message2.textContent = "Please enter a valid email address.";
                 return;
             }
 
@@ -79,15 +114,17 @@
             localStorage.setItem("verification_code", code); // Save code in localStorage
 
           
-            emailjs.send("service_g55k84c", "template_fn43eeh", {to_email: toEmail, verification_code: code})
+            emailjs.send("service_hqdocea", "template_gnkv6kb", {to_email: toEmail, verification_code: code})
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     document.getElementById("email-form").style.display = "none";
                     document.getElementById("code-form").style.display = "block";
-                    document.getElementById("message").textContent = "Verification code sent to your email.";
+                    message.style.display = "block";
+                message.textContent = "Verification code sent to your email.";
                 }, function(error) {
                     console.log('FAILED...', error);
-                    document.getElementById("message2").textContent = "Error sending email. Please try again.";
+                    message2.style.display = "block";
+                    message2.textContent = "Error sending email. Please try again.";
                 });
         });
 
@@ -96,12 +133,15 @@
             const savedCode = localStorage.getItem("verification_code");
 
             if (enteredCode === savedCode) {
-                // Code matches
-                document.getElementById("message").textContent = "Verification successful!";
+                message.style.display = "block";
+                
+                message.textContent = "Verification successful!";
                 // Send a success message to the parent website in the iframe
                 window.parent.postMessage("verification_success", "*");
             } else {
                 // Code does not match
+                message2.style.display = "block";
+                
                 document.getElementById("message2").textContent = "Verification failed. Please try again.";
             }
         });
