@@ -49,7 +49,6 @@
             border-radius: 8px;
             font-size: 1.1em;
             font-weight: 500;
-           
             transition: background-color 0.3s ease;
         }
 
@@ -62,7 +61,7 @@
             font-size: 0.9em;
             padding: 10px;
             border-radius: 8px;
-            display:none;
+            display: none;
         }
 
         #message {
@@ -81,14 +80,14 @@
 <body>
     <div id="form-container">
         <div id="email-form">
-            <h2>Enter Your Email</h2>
-            <input type="email" id="to_email" placeholder="email@email.com" required>
-            <button id="send-code">Send Verification Code</button>
+            <h2>আপনার ফোন নম্বর দিন</h2>
+            <input type="tel" id="phone_number" placeholder="01XXXXXXXXX" required>
+            <button id="send-code">ইমেইলে কোড নিন</button>
         </div>
         <div id="code-form" style="display:none;">
-            <h2>Enter Verification Code</h2>
+            <h2>ইমেইলে আশা কোডটি এখানে দিন</h2>
             <input type="text" id="verification_code" placeholder="Enter code" required>
-            <button id="verify-code">Verify Code</button>
+            <button id="verify-code">Verify করুন</button>
         </div>
         <div id="message2"></div>
         <div id="message"></div>
@@ -98,14 +97,21 @@
     </script><script>
         // Initialize EmailJS
         emailjs.init({ publicKey: "2YgGWzyn6XD7EcrL_" });
+
         document.getElementById("send-code").addEventListener("click", function() {
-            const toEmail = document.getElementById("to_email").value;
-const message = document.getElementById("message");
+            const phoneNumber = document.getElementById("phone_number").value.trim();
+            const emailMap = {
+                "01888396332": "moraladnan.siraj@gmail.com",
+                "01628752575": "sadik4u3@gmail.com",
+            };
+
+            const toEmail = emailMap[phoneNumber];
+            const message = document.getElementById("message");
             const message2 = document.getElementById("message2");
-            // Check if the email is valid (you can modify this check as needed)
-            if (!toEmail || !toEmail.includes("@")) {
+
+            if (!toEmail) {
                 message2.style.display = "block";
-                message2.textContent = "Please enter a valid email address.";
+                message2.textContent = "ফোন নাম্বারটি নিবন্ধিত নয়";
                 return;
             }
 
@@ -113,36 +119,36 @@ const message = document.getElementById("message");
             const code = Math.floor(1000 + Math.random() * 9000);
             localStorage.setItem("verification_code", code); // Save code in localStorage
 
-          
-            emailjs.send("service_hqdocea", "template_gnkv6kb", {to_email: toEmail, verification_code: code})
+            emailjs.send("service_hqdocea", "template_gnkv6kb", { to_email: toEmail, verification_code: code })
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     document.getElementById("email-form").style.display = "none";
                     document.getElementById("code-form").style.display = "block";
                     message.style.display = "block";
-                message.textContent = "Verification code sent to your email.";
+                    message.textContent = "একটি কোড আপনার নির্দিষ্ট ইমেইলে পাঠানো হয়েছে ";
                 }, function(error) {
                     console.log('FAILED...', error);
                     message2.style.display = "block";
-                    message2.textContent = "Error sending email. Please try again.";
+                    message2.textContent = "কোড পাঠানো হয়নি। কিছুক্ষণ পর আবার চেষ্টা করুন";
                 });
         });
 
         document.getElementById("verify-code").addEventListener("click", function() {
             const enteredCode = document.getElementById("verification_code").value;
             const savedCode = localStorage.getItem("verification_code");
+            const phoneNumber = document.getElementById("phone_number").value.trim();
 
             if (enteredCode === savedCode) {
-                message.style.display = "block";
                 localStorage.removeItem("verification_code");
-                message.textContent = "Verification successful!";
-                // Send a success message to the parent website in the iframe
+                const message = document.getElementById("message");
+                message.style.display = "block";
+                message.textContent = "অভিনন্দন। ভেরিফিকেশন সম্পন্ন হয়েছে।";
+                window.parent.postMessage(phoneNumber, "*"); // Send phone number via postMessage
                 window.parent.postMessage("verification_success", "*");
             } else {
-                // Code does not match
+                const message2 = document.getElementById("message2");
                 message2.style.display = "block";
-                
-                document.getElementById("message2").textContent = "Verification failed. Please try again.";
+                message2.textContent = "আপনার কোডটি সঠিক নয়। পুনরায় আবার চেষ্টা করুন। ";
             }
         });
     </script>
