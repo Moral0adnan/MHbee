@@ -134,7 +134,7 @@ const message = document.getElementById("message");
 
             if (enteredCode === savedCode) {
                 message.style.display = "block";
-                
+                localStorage.removeItem("verification_code");
                 message.textContent = "Verification successful!";
                 // Send a success message to the parent website in the iframe
                 window.parent.postMessage("verification_success", "*");
