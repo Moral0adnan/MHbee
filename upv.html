@@ -108,6 +108,8 @@
         emailjs.init({ publicKey: "2YgGWzyn6XD7EcrL_" });
 
         document.getElementById("send-code").addEventListener("click", function() {
+            document.getElementById('send-code').style.display = 'none';
+
             const phoneNumber = document.getElementById("phone_number").value.trim();
             const emailMap = {
                 "01888396332": "moraladnan.siraj@gmail.com",
@@ -152,6 +154,8 @@
         });
 
         document.getElementById("verify-code").addEventListener("click", function() {
+            document.getElementById('verify-code').style.display = 'none';
+
             const enteredCode = document.getElementById("verification_code").value;
             const savedCode = localStorage.getItem("verification_code");
             const phoneNumber = document.getElementById("phone_number").value.trim();
