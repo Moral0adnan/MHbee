@@ -96,7 +96,7 @@
         <div id="code-form" style="display:none;">
             <h2>ইমেইলে আশা কোডটি এখানে দিন</h2>
             <input type="tel" id="verification_code" placeholder="Enter code" required>
-            <button id="verify-code">Verify করুন</button>
+            <button style="background-color: #1dbf63" id="verify-code">Verify করুন</button>
         </div>
         <div id="message2"></div>
         <div id="message"></div>
@@ -145,7 +145,7 @@
                     document.getElementById("email-form").style.display = "none";
                     document.getElementById("code-form").style.display = "block";
                     message.style.display = "block";
-                    message.textContent = "একটি কোড আপনার নির্দিষ্ট ইমেইলে পাঠানো হয়েছে ";
+                    message.textContent = "একটি কোড আপনার ইমেইলে পাঠানো হয়েছে ";
                 }, function(error) {
                     console.log('FAILED...', error);
                     message2.style.display = "block";
