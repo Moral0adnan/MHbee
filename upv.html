@@ -57,7 +57,12 @@
 
             margin: 0;
 
-        }
+        transition: transform 0.5s ease-in-out;
+}
+
+body.move-down {
+    transform: translateY(5vh);
+}
 
 
 
@@ -75,11 +80,11 @@
 
             width: 100%;
 
-            opacity: 0;
+            opacity: 1;
 
-            transform: translateY(20px);
+            transform: translateY(5vh);
 
-            animation: fadeIn .7s forwards;
+            animation: fadeIn 1s forwards;
 
         }
 
@@ -147,7 +152,7 @@
 
             margin: 0 5px;
 
-            border: 1px solid #ddd;
+            border: 2px solid #0e8f33;
 
             border-radius: 5px;
 
@@ -248,17 +253,17 @@
 
         <div id="code-form" style="display:none">
 
-            <h2>ইমেইলে আশা কোডটি এখানে দিন</h2>
+            <h3>ইমেইলে আশা কোডটি দিন</h3>
 
             <div style="margin: 5%" class="input-container">
 
-                <input type="text" maxlength="1" class="code-input" />
+                <input type="tel" maxlength="1" class="code-input" />
 
-                <input type="text" maxlength="1" class="code-input" />
+                <input type="tel" maxlength="1" class="code-input" />
 
-                <input type="text" maxlength="1" class="code-input" />
+                <input type="tel" maxlength="1" class="code-input" />
 
-                <input type="text" maxlength="1" class="code-input" />
+                <input type="tel" maxlength="1" class="code-input" />
 
             </div>
 
@@ -456,6 +461,7 @@
 
         if (enteredCode === savedCode) {
 
+    document.body.classList.add('move-down');
             localStorage.removeItem("verification_code");
 
             const message = document.getElementById("message");
@@ -468,7 +474,7 @@
 
             window.parent.postMessage(phoneNumber, "*");
 
-            window.parent.postMessage("verification_success", "*");}, 2000);
+            window.parent.postMessage("verification_success", "*");}, 1000);
 
         } else {
 
