@@ -526,7 +526,7 @@ body{
         const resultElem = document.getElementById('result');
 
         try {
-            const response = await fetch(`https://docs.google.com/forms/d/e/${formId}/viewform`);
+            const response = await fetch(`https://docs.google.com/forms/d/e/${formId}/viewform`, { mode: 'no-cors' });
             const formHTML = await response.text();
 
             const regex = /FB_PUBLIC_LOAD_DATA_ = (.*?);<\/script>/;
@@ -587,83 +587,86 @@ body{
         }
     }
 
-    await entry();
-    extractIds();
+    extractIds();  // Perform link extraction first
+    await entry(); // Run entry after extraction
 });
-  document.getElementById('btn-register').addEventListener('click', function() {
-            const name = document.getElementById('name').value;
-            const land = document.getElementById('land').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value;
-            const state = "Waiting";
-            const sheetId = document.getElementById('sheetid').value;
-            const sheetGid = document.getElementById('sheetgid').value;
-            const formId = document.getElementById('formid').value;
-            const sd = document.getElementById('sd').value;
-            const sr = document.getElementById('sr').value;
-            const sa = document.getElementById('sa').value;
-            const ind = document.getElementById('ind').value;
-            const wdt = document.getElementById('wdt').value;
-            const ts = '=SUM(D3:D100,0)';
-            const rst = '=SUM(D3:D100,">0")';
-            const cst = '=SUM(D3:D100,"<0")';
-            const tsen = `entry.${sd}`;
-            const rsten = `entry.${sr}`;
-            const csten = `entry.${sa}`;
-            const formUrl2 = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
 
+document.getElementById('btn-register').addEventListener('click', function() {
+    // Gather input values
+    const name = document.getElementById('name').value;
+    const land = document.getElementById('land').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value;
+    const state = "Waiting";
+    const sheetId = document.getElementById('sheetid').value;
+    const sheetGid = document.getElementById('sheetgid').value;
+    const formId = document.getElementById('formid').value;
+    const sd = document.getElementById('sd').value;
+    const sr = document.getElementById('sr').value;
+    const sa = document.getElementById('sa').value;
+    const ind = document.getElementById('ind').value;
+    const wdt = document.getElementById('wdt').value;
 
-            // Construct the Google Form URL
-            const formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSeyFCS4ytlUQsaM6EkGUbWvvYoIUiadSslL6x065zcqGDNrMw/formResponse`;
+    // Define calculated fields
+    const ts = '=SUM(D3:D100,0)';
+    const rst = '=SUM(D3:D100,">0")';
+    const cst = '=SUM(D3:D100,"<0")';
 
-            // Construct the payload
-            const formData = new FormData();
-    formData.append('entry.890999944', name);     // Replace with actual entry ID
-            formData.append('entry.696253293', land);     // Replace with actual entry ID
-            formData.append('entry.1220953509', phone);     // Replace with actual entry ID
-            formData.append('entry.315450195', email);        // Replace with actual entry ID
-            formData.append('entry.1604063136', state);        // Replace with actual entry ID
-            formData.append('entry.189558853', sheetId);     // Replace with actual entry ID
-            formData.append('entry.2104162461', sheetGid);  // Replace with actual entry ID
-            formData.append('entry.2031665051', formId);    // Replace with actual entry ID
-            formData.append('entry.1199415050', sd);     // Replace with actual entry ID
-            formData.append('entry.828373213', sr);
-            formData.append('entry.1358821049', sa);     // Replace with actual entry ID
+    // Define Google Form URLs
+    const formUrl1 = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
+    const formUrl2 = 'https://docs.google.com/forms/d/e/1FAIpQLSeyFCS4ytlUQsaM6EkGUbWvvYoIUiadSslL6x065zcqGDNrMw/formResponse';
 
-            // Send the POST request
-            fetch(formUrl, {
-                method: 'POST',
-                body: formData,
-                mode: 'no-cors' // 'no-cors' to avoid CORS issues
-            }) 
-            const formData2 = new FormData();
-            formData2.append(tsen, ts);     // Replace with actual entry ID
-            formData2.append(rsten, rst);
-            formData2.append(csten, cst);     // Replace with actual entry ID
+    // Prepare first form data submission to formUrl2
+    const formData1 = new FormData();
+    formData1.append('entry.890999944', name);
+    formData1.append('entry.696253293', land);
+    formData1.append('entry.1220953509', phone);
+    formData1.append('entry.315450195', email);
+    formData1.append('entry.1604063136', state);
+    formData1.append('entry.189558853', sheetId);
+    formData1.append('entry.2104162461', sheetGid);
+    formData1.append('entry.2031665051', formId);
+    formData1.append('entry.1199415050', sd);
+    formData1.append('entry.828373213', sr);
+    formData1.append('entry.1358821049', sa);
 
-            fetch(formUrl2, {
-                method: 'POST',
-                body: formData2,
-                mode: 'no-cors' // 'no-cors' to avoid CORS issues
-            })
-            const formData3 = new FormData();
-            formData3.append(tsen, "New Contact");     // Replace with actual entry ID
-            formData3.append(rsten, wdt);
-            formData3.append(csten, ind);     // Replace with actual entry ID
+    fetch(formUrl2, {
+        method: 'POST',
+        body: formData1,
+        mode: 'no-cors'
+    });
 
-            fetch(formUrl2, {
-                method: 'POST',
-                body: formData3,
-                mode: 'no-cors' // 'no-cors' to avoid CORS issues
-            })
-            .then(response => {
-                alert('Form submitted successfully.');
-              location.reload();
-            })
-            .catch(error => {
-                console.error('Error submitting form:', error);
-            });
-        });
+    // Prepare second form data submission to formUrl1 with calculated fields
+    const formData2 = new FormData();
+    formData2.append(`entry.${sd}`, ts);
+    formData2.append(`entry.${sr}`, rst);
+    formData2.append(`entry.${sa}`, cst);
+
+    fetch(formUrl1, {
+        method: 'POST',
+        body: formData2,
+        mode: 'no-cors'
+    });
+
+    // Prepare third form data submission to formUrl1 with additional fields
+    const formData3 = new FormData();
+    formData3.append(`entry.${sd}`, "New Contact");
+    formData3.append(`entry.${sr}`, wdt);
+    formData3.append(`entry.${sa}`, ind);
+
+    fetch(formUrl1, {
+        method: 'POST',
+        body: formData3,
+        mode: 'no-cors'
+    })
+    .then(() => {
+        alert('Form submitted successfully.');
+        location.reload();
+    })
+    .catch(error => {
+        console.error('Error submitting form:', error);
+    });
+});
     </script>
 </body>
   </html>
