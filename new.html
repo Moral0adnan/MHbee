@@ -514,7 +514,7 @@ document.getElementById('calculate').addEventListener('click', async function(ev
 
     const formId = document.getElementById('formid').value;
     try {
-        const response = await fetch(`https://docs.google.com/forms/d/e/${formId}/viewform`, { mode: 'no-cors' });
+        const response = await fetch(`https://docs.google.com/forms/d/e/${formId}/formResponse`, { mode: 'no-cors' });
         
         // Check if response is OK or fetch another way to get the data if no-cors fails
         if (response && response.ok) {
