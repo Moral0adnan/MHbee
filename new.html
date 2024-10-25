@@ -431,7 +431,7 @@ body{
 </head>
 <body>
     <div class="registration-container">
-        <iframe style="width: 100%;height: 600px;" src="https://tinyurl.com/upsave"></iframe>
+        <iframe style="width: 100%;height: 600px;" src=""></iframe>
     </div>
     <div class="registration-container">
         <div class="registration-header">
@@ -504,37 +504,26 @@ body{
             </form>
         </div>
         <div class="registration-footer">
-            <h3>Start Auto Value the Input<button class="calculator-btn"id="calculate">AutoPut</button></h3>
+            <h3>Start Auto Value the Input <button style="display: none;" class="calculator-btn"id="calculate">Auto ENTRY</button><button class="calculator-btn"id="calculate2">Auto ID</button></h3>
            <h3>Owner list sheet <a href="https://docs.google.com/spreadsheets/d/1Bp3NBLwOvw3KJ6znz47s1mhbC5phzHSVP9O3_i1ydUQ/edit?gid=1664436013#gid=1664436013" target="_blank">here</a></h3>
         </div>
     </div>
     <script>
-        document.getElementById('calculate').addEventListener('click', async function(event) {
+document.getElementById('calculate').addEventListener('click', async function(event) {
     event.preventDefault();
 
-    async function entry() {
-        const formIdInput = document.getElementById('formurl').value;
-        const formUrl = `https://docs.google.com/forms/d/e/${formIdInput}/formResponse`;
-        const formIdMatch = formUrl.match(/\/e\/([^/]+)/);
-
-        if (!formIdMatch) {
-            document.getElementById('result').textContent = 'Invalid Google Form URL!';
-            return;
-        }
-
-        const formId = formIdMatch[1];
-        const resultElem = document.getElementById('result');
-
-        try {
-            const response = await fetch(`https://docs.google.com/forms/d/e/${formId}/viewform`, { mode: 'no-cors' });
+    const formId = document.getElementById('formid').value;
+    try {
+        const response = await fetch(`https://docs.google.com/forms/d/e/${formId}/viewform`, { mode: 'no-cors' });
+        
+        // Check if response is OK or fetch another way to get the data if no-cors fails
+        if (response && response.ok) {
             const formHTML = await response.text();
-
             const regex = /FB_PUBLIC_LOAD_DATA_ = (.*?);<\/script>/;
             const match = regex.exec(formHTML);
 
             if (match && match[1]) {
                 const fbPublicLoadData = JSON.parse(match[1]);
-                
                 const descriptionNumber = fbPublicLoadData[1][1][0][4][0][0];
                 const reasonNumber = fbPublicLoadData[1][1][1][4][0][0];
                 const amountNumber = fbPublicLoadData[1][1][2][4][0][0];
@@ -543,52 +532,39 @@ body{
                 document.getElementById("sr").value = reasonNumber;
                 document.getElementById("sa").value = amountNumber;
             } else {
-                resultElem.textContent = 'FB_PUBLIC_LOAD_DATA_ not found!';
+                document.getElementById("result").textContent = 'FB_PUBLIC_LOAD_DATA_ not found!';
             }
-        } catch (error) {
-            resultElem.textContent = 'Error fetching or processing the form data!';
-        }
-    }
-
-    function extractIds() {
-        const sheetUrl = document.getElementById('sheeturl').value;
-        const formUrl = document.getElementById('formurl').value;
-
-        const idRegexSheet = /\/d\/([a-zA-Z0-9_-]+)/;
-        const gidRegex = /gid=([0-9]+)/;
-
-        const sheetIdMatch = sheetUrl.match(idRegexSheet);
-        const gidMatch = sheetUrl.match(gidRegex);
-
-        const sheetId = sheetIdMatch ? sheetIdMatch[1] : "Not found";
-        const sheetGid = gidMatch ? gidMatch[1] : "Not found";
-
-        document.getElementById('sheetid').value = sheetId;
-        document.getElementById('sheetgid').value = sheetGid;
-
-        if (sheetId === "Not found") {
-            // Additional handling for sheetId not found
-        }
-
-        if (sheetGid === "Not found") {
-            // Additional handling for sheetGid not found
-        }
-
-        const idRegexForm = /\/e\/([a-zA-Z0-9_-]+)/;
-        const formIdMatch = formUrl.match(idRegexForm);
-
-        const formId = formIdMatch ? formIdMatch[1] : "Not found";
-        document.getElementById('formid').value = formId;
-
-        if (formId === "Not found") {
-            document.getElementById('formId').classList.add('not-found');
         } else {
-            document.getElementById('formId').classList.remove('not-found');
+            document.getElementById("result").textContent = 'Failed to fetch form data due to CORS or form access restrictions!';
         }
+    } catch (error) {
+        document.getElementById("result").textContent = 'Error fetching or processing the form data!';
     }
+});
 
-    extractIds();  // Perform link extraction first
-    await entry(); // Run entry after extraction
+document.getElementById('calculate2').addEventListener('click', async function(e) {
+    e.preventDefault();
+    document.getElementById("calculate2").style.display = 'none';
+    document.getElementById("calculate").style.display = 'block';
+
+    const sheetUrl = document.getElementById('sheeturl').value;
+    const formUrl = document.getElementById('formurl').value;
+
+    const idRegexSheet = /\/d\/([a-zA-Z0-9_-]+)/;
+    const gidRegex = /gid=([0-9]+)/;
+    const sheetIdMatch = sheetUrl.match(idRegexSheet);
+    const gidMatch = sheetUrl.match(gidRegex);
+
+    const sheetId = sheetIdMatch ? sheetIdMatch[1] : "Not found";
+    const sheetGid = gidMatch ? gidMatch[1] : "Not found";
+
+    document.getElementById('sheetid').value = sheetId;
+    document.getElementById('sheetgid').value = sheetGid;
+
+    const idRegexForm = /\/e\/([a-zA-Z0-9_-]+)/;
+    const formIdMatch = formUrl.match(idRegexForm);
+    const formId = formIdMatch ? formIdMatch[1] : "Not found";
+    document.getElementById('formid').value = formId;
 });
 
 document.getElementById('btn-register').addEventListener('click', function() {
