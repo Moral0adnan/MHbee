@@ -237,8 +237,7 @@ body.move-down {
 <body>
 
     <div id="form-container">
-
-        <i class="fa-duotone fa-solid fa-user-police-tie mail-icon"></i>
+        <img style="margin-left: 40px;" src="verify.gif" id="imgc">
         <div id="email-form">
 
             <h2>আপনার ফোন নম্বর দিন</h2>
@@ -332,6 +331,7 @@ body.move-down {
                 document.getElementById("email-form").style.display = "none";
                 document.getElementById("code-form").style.display = "block";
                 message.style.display = "block";
+                document.getElementById("imgc").src = "sotp.gif";
                 message.textContent = "একটি কোড আপনার ইমেইলে পাঠানো হয়েছে ";
 
                 // Focus the first code input field
@@ -404,4 +404,3 @@ body.move-down {
 </body>
 
 </html>
-
